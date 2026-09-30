@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hành trình chinh phục NV1💪</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for cute icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Nunito for cute rounded look -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pastelPink: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            200: '#fecdd3',
+                            300: '#fda4af',
+                            400: '#fb7185',
+                            500: '#f43f5e',
+                            light: '#fff0f5',
+                            main: '#ffb6c1',
+                            deep: '#ff8da1',
+                            card: '#ffffff'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #fff0f5 0%, #ffe4e6 50%, #fdf2f8 100%);
+            min-height: 100vh;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fff1f2;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #fbcfe8;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f472b6;
+        }
+    </style>
+</head>
+<body class="text-gray-700 antialiased selection:bg-pink-200 selection:text-pink-700">
+
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        
+        <!-- Header Section -->
+        <header class="text-center mb-10 bg-white/85 backdrop-blur-md rounded-3xl p-6 shadow-xl border border-pink-100 relative overflow-hidden">
+            <div class="absolute -right-10 -top-10 w-32 h-32 bg-pink-200/50 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -left-10 -bottom-10 w-32 h-32 bg-rose-200/50 rounded-full blur-2xl pointer-events-none"></div>
+            
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-800 tracking-wide mt-2">
+                Xuân <span class="text-pink-500">&</span> Hiền
+            </h1>
+            <p class="text-sm md:text-base text-gray-500 mt-1 font-semibold">
+                Góc điểm danh - Hành trình kỷ luật ✨
+            </p>
+
+            <!-- Streak & Stats Dashboard -->
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6 max-w-2xl mx-auto">
+                <div class="bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-2xl border border-pink-200 shadow-sm flex items-center space-x-3">
+                    <div class="p-3 bg-pink-200 text-pink-600 rounded-xl text-xl">
+                        <i class="fa-solid fa-fire"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">Chuỗi Streak</p>
+                        <p id="streakCount" class="text-xl font-extrabold text-pink-600">0 ngày</p>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-2xl border border-pink-200 shadow-sm flex items-center space-x-3">
+                    <div class="p-3 bg-rose-200 text-rose-600 rounded-xl text-xl">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">Mục tiêu</p>
+                        <p id="totalCompleted" class="text-xl font-extrabold text-rose-600">0/255</p>
+                    </div>
+                </div>
+
+                <div class="col-span-2 md:col-span-1 bg-gradient-to-br from-pink-50 to-rose-50 p-4 rounded-2xl border border-pink-200 shadow-sm flex items-center space-x-3 justify-center md:justify-start">
+                    <div class="p-3 bg-pink-300 text-white rounded-xl text-xl">
+                        <i class="fa-solid fa-clock"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="text-xs text-gray-500 font-bold uppercase tracking-wider">Hôm nay</p>
+                        <p id="currentLiveDate" class="text-sm font-bold text-gray-700">Đang tải...</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="space-y-6" id="datesContainer">
+            <!-- Dynamic dates will be injected here via JavaScript -->
+        </main>
+
+        <footer class="text-center mt-12 pb-6 text-gray-400 text-xs font-semibold">
+            <p>Ghi nhận sự nỗ lực và quyết tâm của Xuân & Hiền💪</p>
+        </footer>
+
+    </div>
+
+    <!-- Notification Toast Popup -->
+    <div id="toast" class="fixed bottom-5 right-5 transform translate-y-20 opacity-0 transition-all duration-300 bg-gray-900 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 z-50 text-sm font-medium">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-pink-400 text-lg"></i>
+        <span id="toastMessage">Điểm danh thành công!</span>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'xuan_hien_diem_danh_255_days_v2';
+        
+        function formatDateString(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function formatDisplayDate(dateStr) {
+            const parts = dateStr.split('-');
+            const d = new Date(parts[0], parts[1] - 1, parts[2]);
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            return d.toLocaleDateString('vi-VN', options);
+        }
+
+        const todayStr = formatDateString(new Date());
+
+        function loadData() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    return JSON.parse(saved);
+                }
+            } catch (e) {
+                console.error("Error loading data from localStorage", e);
+            }
+            return {};
+        }
+
+        let attendanceData = loadData();
+
+        function ensureAutomaticDays() {
+            const today = new Date();
+            for (let i = 0; i < 255; i++) {
+                const d = new Date(today);
+                d.setDate(today.getDate() + i);
+                const dStr = formatDateString(d);
+                if (!attendanceData[dStr]) {
+                    attendanceData[dStr] = {
+                        xuanSleep: { checked: false, time: null },
+                        xuanStudy: { checked: false, time: null },
+                        hienSleep: { checked: false, time: null },
+                        hienStudy: { checked: false, time: null }
+                    };
+                }
+            }
+            saveData();
+        }
+
+        ensureAutomaticDays();
+
+        function saveData() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(attendanceData));
+            } catch (e) {
+                console.error("Error saving data to localStorage", e);
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMessage.textContent = message;
+            if (type === 'success') {
+                toastIcon.className = 'fa-solid fa-circle-check text-pink-400 text-lg';
+            } else {
+                toastIcon.className = 'fa-solid fa-circle-xmark text-rose-400 text-lg';
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+
+        function updateStats() {
+            const allDates = Object.keys(attendanceData).sort();
+            let completedDaysCount = 0;
+
+            allDates.forEach(dStr => {
+                const dayObj = attendanceData[dStr];
+                if (!dayObj) return;
+                const allDone = dayObj.xuanSleep.checked && dayObj.xuanStudy.checked && dayObj.hienSleep.checked && dayObj.hienStudy.checked;
+                if (allDone) {
+                    completedDaysCount++;
+                }
+            });
+
+            let realStreak = 0;
+            let checkDate = new Date();
+            while (true) {
+                const s = formatDateString(checkDate);
+                if (!attendanceData[s]) break;
+                const dayObj = attendanceData[s];
+                const allDone = dayObj.xuanSleep.checked && dayObj.xuanStudy.checked && dayObj.hienSleep.checked && dayObj.hienStudy.checked;
+                
+                if (allDone) {
+                    realStreak++;
+                    checkDate.setDate(checkDate.getDate() - 1);
+                } else {
+                    if (s === todayStr) {
+                        checkDate.setDate(checkDate.getDate() - 1);
+                        const yesterdayStr = formatDateString(checkDate);
+                        if (attendanceData[yesterdayStr]) {
+                            const yObj = attendanceData[yesterdayStr];
+                            if (!(yObj.xuanSleep.checked && yObj.xuanStudy.checked && yObj.hienSleep.checked && yObj.hienStudy.checked)) {
+                                break;
+                            }
+                        } else {
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+            }
+
+            document.getElementById('streakCount').textContent = `${realStreak} ngày`;
+            document.getElementById('totalCompleted').textContent = `${completedDaysCount}/255`;
+
+            const options = { weekday: 'long', year: 'numeric', month: 'numeric', day: 'numeric' };
+            document.getElementById('currentLiveDate').textContent = new Date().toLocaleDateString('vi-VN', options);
+        }
+
+        window.toggleAttendance = function(dateStr, person, task) {
+            const now = new Date();
+            const timeString = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+            
+            const key = `${person}${task === 'sleep' ? 'Sleep' : 'Study'}`;
+            const currentStatus = attendanceData[dateStr][key].checked;
+
+            if (!currentStatus) {
+                attendanceData[dateStr][key] = {
+                    checked: true,
+                    time: timeString
+                };
+                showToast(`Đã điểm danh lúc ${timeString} 💕`);
+            } else {
+                attendanceData[dateStr][key] = {
+                    checked: false,
+                    time: null
+                };
+                showToast(`Đã hủy điểm danh!`, 'info');
+            }
+
+            saveData();
+            renderUI();
+        }
+
+        function renderUI() {
+            const container = document.getElementById('datesContainer');
+            container.innerHTML = '';
+
+            const sortedDates = Object.keys(attendanceData).sort((a, b) => {
+                const aDone = attendanceData[a].xuanSleep.checked && attendanceData[a].xuanStudy.checked && attendanceData[a].hienSleep.checked && attendanceData[a].hienStudy.checked;
+                const bDone = attendanceData[b].xuanSleep.checked && attendanceData[b].xuanStudy.checked && attendanceData[b].hienSleep.checked && attendanceData[b].hienStudy.checked;
+
+                if (aDone && !bDone) return 1;  
+                if (!aDone && bDone) return -1; 
+                return a.localeCompare(b);        
+            });
+
+            sortedDates.forEach(dateStr => {
+                const dayData = attendanceData[dateStr];
+                if (!dayData) return;
+                const isToday = (dateStr === todayStr);
+                const displayDate = formatDisplayDate(dateStr);
+
+                const allDone = dayData.xuanSleep.checked && dayData.xuanStudy.checked && dayData.hienSleep.checked && dayData.hienStudy.checked;
+
+                const card = document.createElement('div');
+                card.className = `bg-white/90 backdrop-blur-sm rounded-3xl p-6 shadow-md border transition-all duration-300 ${isToday ? 'border-pink-400 ring-4 ring-pink-100 shadow-xl' : 'border-pink-100 hover:shadow-lg'}`;
+
+                card.innerHTML = `
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-5 border-b border-pink-100 gap-2">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2.5 rounded-2xl ${isToday ? 'bg-pink-500 text-white shadow-md shadow-pink-200' : 'bg-pink-100 text-pink-600'}">
+                                <i class="fa-solid fa-calendar-day text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-extrabold text-lg text-gray-800 capitalize flex items-center gap-2">
+                                    ${displayDate}
+                                    ${isToday ? '<span class="text-xs bg-pink-100 text-pink-600 px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider">Hôm nay</span>' : ''}
+                                </h3>
+                                <p class="text-xs text-gray-400 font-semibold">${dateStr}</p>
+                            </div>
+                        </div>
+                        <div>
+                            ${allDone ? '<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full"><i class="fa-solid fa-check-circle"></i> Đã hoàn thành ngày</span>' : '<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-600 text-xs font-bold rounded-full"><i class="fa-solid fa-hourglass-half"></i> Chưa xong</span>'}
+                        </div>
+                    </div>
+
+                    <!-- Grid for Xuân and Hiền -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Xuân's Card -->
+                        <div class="bg-pink-50/50 rounded-2xl p-4 border border-pink-100 shadow-sm">
+                            <div class="flex items-center space-x-2 mb-3">
+                                <div class="w-8 h-8 rounded-full bg-pink-400 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                                    🌸
+                                </div>
+                                <h4 class="font-extrabold text-pink-700 text-base">Xuân</h4>
+                            </div>
+
+                            <div class="space-y-3">
+                                <!-- Giờ đi ngủ -->
+                                <div onclick="toggleAttendance('${dateStr}', 'xuan', 'sleep')" class="cursor-pointer group flex items-center justify-between p-3 rounded-xl bg-white border ${dayData.xuanSleep.checked ? 'border-pink-300 bg-pink-50/80 shadow-sm' : 'border-gray-100 hover:border-pink-200'} transition-all">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-6 h-6 rounded-lg flex items-center justify-center transition-colors ${dayData.xuanSleep.checked ? 'bg-pink-500 text-white' : 'border-2 border-gray-300 group-hover:border-pink-400'}">
+                                            ${dayData.xuanSleep.checked ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-bold text-gray-700 group-hover:text-pink-600 transition-colors">🌙 Giờ đi ngủ</p>
+                                            <p class="text-xs text-gray-400">${dayData.xuanSleep.time ? 'Lúc: ' + dayData.xuanSleep.time : 'Chưa điểm danh'}</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs font-bold px-2.5 py-1 rounded-lg ${dayData.xuanSleep.checked ? 'bg-pink-200 text-pink-700' : 'text-gray-400 bg-gray-50'}">
+                                        ${dayData.xuanSleep.checked ? dayData.xuanSleep.time : 'Tích ngay'}
+                                    </span>
+                                </div>
+
+                                <!-- Giờ dậy học bài -->
+                                <div onclick="toggleAttendance('${dateStr}', 'xuan', 'study')" class="cursor-pointer group flex items-center justify-between p-3 rounded-xl bg-white border ${dayData.xuanStudy.checked ? 'border-pink-300 bg-pink-50/80 shadow-sm' : 'border-gray-100 hover:border-pink-200'} transition-all">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-6 h-6 rounded-lg flex items-center justify-center transition-colors ${dayData.xuanStudy.checked ? 'bg-pink-500 text-white' : 'border-2 border-gray-300 group-hover:border-pink-400'}">
+                                            ${dayData.xuanStudy.checked ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-bold text-gray-700 group-hover:text-pink-600 transition-colors">📚 Giờ dậy học bài</p>
+                                            <p class="text-xs text-gray-400">${dayData.xuanStudy.time ? 'Lúc: ' + dayData.xuanStudy.time : 'Chưa điểm danh'}</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs font-bold px-2.5 py-1 rounded-lg ${dayData.xuanStudy.checked ? 'bg-pink-200 text-pink-700' : 'text-gray-400 bg-gray-50'}">
+                                        ${dayData.xuanStudy.checked ? dayData.xuanStudy.time : 'Tích ngay'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hiền's Card -->
+                        <div class="bg-rose-50/50 rounded-2xl p-4 border border-rose-100 shadow-sm">
+                            <div class="flex items-center space-x-2 mb-3">
+                                <div class="w-8 h-8 rounded-full bg-rose-400 text-white flex items-center justify-center font-bold text-sm shadow-sm">
+                                    ⭐
+                                </div>
+                                <h4 class="font-extrabold text-rose-700 text-base">Hiền</h4>
+                            </div>
+
+                            <div class="space-y-3">
+                                <!-- Giờ đi ngủ -->
+                                <div onclick="toggleAttendance('${dateStr}', 'hien', 'sleep')" class="cursor-pointer group flex items-center justify-between p-3 rounded-xl bg-white border ${dayData.hienSleep.checked ? 'border-rose-300 bg-rose-50/80 shadow-sm' : 'border-gray-100 hover:border-rose-200'} transition-all">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-6 h-6 rounded-lg flex items-center justify-center transition-colors ${dayData.hienSleep.checked ? 'bg-rose-500 text-white' : 'border-2 border-gray-300 group-hover:border-rose-400'}">
+                                            ${dayData.hienSleep.checked ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-bold text-gray-700 group-hover:text-rose-600 transition-colors">🌙 Giờ đi ngủ</p>
+                                            <p class="text-xs text-gray-400">${dayData.hienSleep.time ? 'Lúc: ' + dayData.hienSleep.time : 'Chưa điểm danh'}</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs font-bold px-2.5 py-1 rounded-lg ${dayData.hienSleep.checked ? 'bg-rose-200 text-rose-700' : 'text-gray-400 bg-gray-50'}">
+                                        ${dayData.hienSleep.checked ? dayData.hienSleep.time : 'Tích ngay'}
+                                    </span>
+                                </div>
+
+                                <!-- Giờ dậy học bài -->
+                                <div onclick="toggleAttendance('${dateStr}', 'hien', 'study')" class="cursor-pointer group flex items-center justify-between p-3 rounded-xl bg-white border ${dayData.hienStudy.checked ? 'border-rose-300 bg-rose-50/80 shadow-sm' : 'border-gray-100 hover:border-rose-200'} transition-all">
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-6 h-6 rounded-lg flex items-center justify-center transition-colors ${dayData.hienStudy.checked ? 'bg-rose-500 text-white' : 'border-2 border-gray-300 group-hover:border-rose-400'}">
+                                            ${dayData.hienStudy.checked ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-bold text-gray-700 group-hover:text-rose-600 transition-colors">📚 Giờ dậy học bài</p>
+                                            <p class="text-xs text-gray-400">${dayData.hienStudy.time ? 'Lúc: ' + dayData.hienStudy.time : 'Chưa điểm danh'}</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs font-bold px-2.5 py-1 rounded-lg ${dayData.hienStudy.checked ? 'bg-rose-200 text-rose-700' : 'text-gray-400 bg-gray-50'}">
+                                        ${dayData.hienStudy.checked ? dayData.hienStudy.time : 'Tích ngay'}
+                                    </span>
+                               </div>
+                            </div>
+                        </div>
+
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            updateStats();
+        }
+
+        window.onload = function() {
+            ensureAutomaticDays();
+            renderUI();
+        }
+    </script>
+</body>
+</html>
